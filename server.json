@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.seayniclabs/privacyops",
+  "description": "Track credit-bureau disputes and draft dispute letters from fixed templates, locally.",
+  "repository": {
+    "url": "https://github.com/seayniclabs/privacyops",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "privacyops-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "PRIVACYOPS_DATA_DIR", "description": "Folder for your dispute records and letters. Default: ~/.local/share/privacyops", "isRequired": false },
+        { "name": "PRIVACYOPS_DISPUTES_ALLOW_DELETE", "description": "true lets the assistant delete a dispute record without asking you. Default false.", "isRequired": false }
+      ]
+    }
+  ]
+}

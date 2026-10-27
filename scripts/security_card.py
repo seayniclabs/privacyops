@@ -9,6 +9,7 @@ Usage: python scripts/security_card.py   (paste the output into the README, or u
 from __future__ import annotations
 
 import asyncio
+import inspect
 import json
 import re
 import sys
@@ -31,6 +32,13 @@ SECRETS = ("PrivacyOps stores no passwords or API keys and has no tool that take
            "Security number.")
 
 
+
+def _clean(d: dict) -> dict:
+    """Same text on every Python: 3.13 strips docstring indentation, earlier versions keep it."""
+    if d.get("description"):
+        d["description"] = inspect.cleandoc(d["description"])
+    return d
+
 def card() -> str:
     srv = build_server(Config(env={}, file_data={}))
     tools = asyncio.run(srv.list_tools())
@@ -39,8 +47,8 @@ def card() -> str:
     missing = [n for n in APPROVAL_GATED if n not in names]
     if missing:
         raise SystemExit(f"security_card: approval-gated tools not found: {missing}")
-    startup = (srv.instructions or "") + json.dumps([t.model_dump(exclude_none=True, mode="json") for t in tools]) \
-        + json.dumps([p.model_dump(exclude_none=True, mode="json") for p in prompts])
+    startup = (srv.instructions or "") + json.dumps([_clean(t.model_dump(exclude_none=True, mode="json")) for t in tools]) \
+        + json.dumps([_clean(p.model_dump(exclude_none=True, mode="json")) for p in prompts])
     read_only = [t.name for t in tools if t.annotations and t.annotations.readOnlyHint]
     writes = [t.name for t in tools if t.name not in read_only and t.name not in APPROVAL_GATED]
     gated = [n for n in APPROVAL_GATED]

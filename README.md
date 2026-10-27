@@ -17,7 +17,7 @@ PrivacyOps lets an AI assistant track your credit-report disputes and draft disp
 | Read-only tools | 5: `disputes_list`, `disputes_get`, `disputes_deadlines`, `letters_templates`, `privacyops_modules` |
 | Writes on this computer | `disputes_create`, `disputes_update`, `letters_generate`: local files only, no approval needed. Each dispute change is recorded in its history. |
 | Needs your approval | `disputes_delete`: you approve each delete in your app, or pre-approve in settings. The AI cannot approve for you. |
-| Startup cost | about 6,000 tokens (9 tools, 2 skill prompts) |
+| Startup cost | about 5,900 tokens (9 tools, 2 skill prompts) |
 | Changes | Tool descriptions are locked by hash (`tool-manifest.lock.json`); CI fails if they change silently. |
 <!-- security-card:end -->
 

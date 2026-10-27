@@ -36,7 +36,8 @@ DUE_CRA = (
 )
 DUE_FURNISHER = (
     "The furnisher must complete its investigation and report the results before the period in "
-    "15 U.S.C. 1681i(a)(1)(A) ends (15 U.S.C. 1681s-2(a)(8)(E)). This tool does not compute that date."
+    "15 U.S.C. 1681i(a)(1)(A) ends (15 U.S.C. 1681s-2(a)(8)(E)(iii)): 30 days from when the furnisher "
+    "receives the dispute. sent_date is only an estimate of that day; disputes_deadlines shows the details."
 )
 NO_DATE = "Set sent_date to see the 30-day due date (15 U.S.C. 1681i(a)(1)(A))."
 
@@ -132,11 +133,13 @@ class DeadlinePage(BaseModel):
 
 
 def due_for(party_type: str, sent_date: str | None) -> tuple[str | None, str]:
-    if party_type == "furnisher":
-        return None, DUE_FURNISHER
     if sent_date:
+        if party_type == "furnisher":
+            return (date.fromisoformat(sent_date) + timedelta(days=30)).isoformat(), DUE_FURNISHER
         due = date.fromisoformat(sent_date) + timedelta(days=30)
         return due.isoformat(), DUE_CRA
+    if party_type == "furnisher":
+        return None, DUE_FURNISHER
     return None, NO_DATE
 
 

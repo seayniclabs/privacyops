@@ -1,6 +1,6 @@
 [project]
 name = "privacyops-mcp"
-version = "0.2.0"
+version = "0.2.1"
 description = "MCP bundle for consumers tracking credit-bureau disputes and drafting dispute letters from fixed templates. Local only."
 readme = "README.md"
 requires-python = ">=3.11"

@@ -2,6 +2,10 @@
 
 PrivacyOps follows [semantic versioning](https://semver.org). Modules added after 0.1 ship switched off.
 
+## 0.2.1 — 2026-10-27
+
+- Furnisher disputes now show the same 30-day due date in `disputes_get`, `disputes_list` and `disputes_update` as in `disputes_deadlines` (15 U.S.C. 1681s-2(a)(8)(E)(iii)); before, only `disputes_deadlines` showed it.
+
 ## 0.2.0 — 2026-10-27
 
 - Skills: `getting-started` (setup, settings, `--doctor`, reading errors) and `dispute-walkthrough` (gathering facts, choosing the route and template, certified mail, deadlines, follow-up, when to get help). Each carries the not-legal-advice notice in plain words. No third-party skills.

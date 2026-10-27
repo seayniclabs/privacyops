@@ -172,13 +172,15 @@ def test_paging_returns_next_offset(env):
     assert last["has_more"] is False and last["next_offset"] is None
 
 
-def test_due_date_only_for_agency_disputes(env):
+def test_due_date_for_agency_and_furnisher_disputes(env):
     mcp = server(env)
     agency = create(mcp, sent_date="2026-10-01")
     furnisher = create(mcp, party_type="furnisher", sent_date="2026-10-01")
     assert agency["due_date"] == "2026-10-31"
     assert "1681i(a)(1)(A)" in agency["due_note"]
-    assert furnisher["due_date"] is None
+    # matches disputes_deadlines: 30 days, 15 U.S.C. 1681s-2(a)(8)(E)(iii)
+    assert furnisher["due_date"] == "2026-10-31" and "1681s-2(a)(8)(E)(iii)" in furnisher["due_note"]
+    assert create(mcp, party_type="furnisher")["due_date"] is None  # no sent date, no due date
 
 
 def test_sent_status_without_date_uses_today(env):

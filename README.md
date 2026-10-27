@@ -63,7 +63,7 @@ uvx privacyops-mcp --version
 uvx privacyops-mcp --doctor          # checks your data folder and records, prints fixes
 ```
 
-Pin the exact version if you want updates only when you choose them: `uvx privacyops-mcp==0.2.0`.
+Pin the exact version if you want updates only when you choose them: `uvx privacyops-mcp==0.2.1`.
 
 Or with pip:
 

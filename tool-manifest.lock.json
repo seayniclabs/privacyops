@@ -1,0 +1,18 @@
+{
+  "bundle": "privacyops",
+  "version": "0.2.0",
+  "entries": {
+    "instructions": "ec5da6ba06c22b8c6eda93d0d25294f54b2076a4fe8b197d6c2beb6cabf82454",
+    "prompt:dispute-walkthrough": "fa064b4f8c9ddbed0abac87bb1c93111361175b2dc804afe703ccb31fac23359",
+    "prompt:getting-started": "7f07a9ad71d14db4937340232953722c53f42f204ac0ab5ac4920d8c02335704",
+    "tool:disputes_create": "3a48392de933f4863b77f79d79abb6a77343f25e1bc2435b97082dc3fb3a30e0",
+    "tool:disputes_deadlines": "18d776f894388f0b016f4f1fce0473a73381e04218c3523a38269306eceaeb33",
+    "tool:disputes_delete": "02b7c540a16d092d28adbcd98de4ce37bcaa3a3373ecafa4f43accef1cb4b47a",
+    "tool:disputes_get": "15dcd42f67fc7fb7059db822a70b43280db6aa4caf66697a1fd9c68c9ae008b6",
+    "tool:disputes_list": "7b6d40217800af958ddff624cb34830b2ffac1f019200f45a10273c40883b72e",
+    "tool:disputes_update": "df9e814515234dbcfc7e266f9b766ddd0b83247263864840700fce9febbd9612",
+    "tool:letters_generate": "5c6ad38774f2d4ba2db74dfa2bd26bb1f8041b452286ca29af7fa3993d127f90",
+    "tool:letters_templates": "9c994bbb007a31b7f8ccd7c058226dbb58336fbedf0b8f97661309a88cc4fb23",
+    "tool:privacyops_modules": "e63b11b1feb3dc6da6fccc97d55fe1668a81bf304416e8b90858da074e28dbbd"
+  }
+}

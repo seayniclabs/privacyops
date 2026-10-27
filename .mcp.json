@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "privacyops": {
+      "command": "uvx",
+      "args": [
+        "privacyops-mcp==0.2.0"
+      ]
+    }
+  }
+}

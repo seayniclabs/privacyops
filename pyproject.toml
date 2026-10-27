@@ -1,6 +1,6 @@
 [project]
 name = "privacyops-mcp"
-version = "0.1.0"
+version = "0.2.0"
 description = "MCP bundle for consumers tracking credit-bureau disputes and drafting dispute letters from fixed templates. Local only."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -12,7 +12,7 @@ dependencies = [
     "mcp[cli]>=1.27,<2",
     "pydantic>=2.7",
 ]
-keywords = ["mcp", "model-context-protocol", "fcra", "credit", "dispute", "privacy"]
+keywords = ["mcp", "model-context-protocol", "fcra", "credit", "dispute", "privacy", "skills"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -33,6 +33,14 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/privacyops_mcp"]
+
+# One source for the skills: the repo's skills/ folder ships inside the package too,
+# so the server can serve it as MCP prompts and resources.
+[tool.hatch.build.targets.wheel.force-include]
+"skills" = "privacyops_mcp/skills"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "skills", "tests", "scripts", "README.md", "LICENSE", "CREDITS.md", "CHANGELOG.md", "SECURITY.md", "server.json", ".claude-plugin", ".mcp.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

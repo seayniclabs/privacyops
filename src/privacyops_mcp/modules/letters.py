@@ -75,8 +75,8 @@ class LettersModule(Module):
     def __init__(self) -> None:
         super().__init__(
             name="letters",
-            summary="Dispute letters from fixed, reviewed-by-no-one templates, saved as text files on this "
-                    "machine. Not legal advice.",
+            summary="Dispute letters from fixed templates that no lawyer has reviewed, saved as text files on "
+                    "this machine. Not legal advice.",
             settings=[],
             tools={
                 "letters_templates": "The available templates, the agencies with checked contact details, and the disclaimer.",

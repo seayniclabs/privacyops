@@ -23,7 +23,7 @@ from privacyops_mcp.templates import TEMPLATES
 
 ALL = {
     "privacyops_modules",
-    "disputes_list", "disputes_get", "disputes_create", "disputes_update", "disputes_delete",
+    "disputes_list", "disputes_get", "disputes_create", "disputes_update", "disputes_delete", "disputes_deadlines",
     "letters_templates", "letters_generate",
 }
 
@@ -35,7 +35,8 @@ def data_dir(tmp_path):
 
 @pytest.fixture
 def env(data_dir):
-    return {"PRIVACYOPS_DATA_DIR": str(data_dir)}
+    # The approval log goes into the temporary folder too, never into the real home folder.
+    return {"PRIVACYOPS_DATA_DIR": str(data_dir), "PRIVACYOPS_APPROVAL_LOG": str(data_dir.parent / "approvals.jsonl")}
 
 
 def server(env, **kw):

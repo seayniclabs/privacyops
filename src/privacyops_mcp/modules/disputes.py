@@ -15,8 +15,10 @@ from mcp.server.fastmcp import Context, FastMCP
 from mcp.types import ToolAnnotations
 from pydantic import BaseModel, Field
 
-from ..common import clean, now_iso, parse_date, today
+from .. import approvals
+from ..common import DISCLAIMER, clean, now_iso, parse_date, today
 from ..config import Config
+from ..deadlines import CHECKED, OPEN_STATUSES, SOURCES, assess
 from ..errors import PrivacyOpsError
 from ..store import Store
 from . import Module, Setting
@@ -94,6 +96,41 @@ class DeleteApproval(BaseModel):
     delete: bool = Field(description="Permanently delete this dispute record?")
 
 
+class RuleSource(BaseModel):
+    cite: str
+    url: str
+    checked: str = Field(description="Date the official text was checked.")
+    says: str
+
+
+class DeadlineRow(BaseModel):
+    id: str
+    party_type: PartyType
+    party_name: str
+    status: Status
+    sent_date: str | None = None
+    due_date: str | None = Field(None, description="Sent date + 30 days. Counted from the sent date, not receipt.")
+    extended_due_date: str | None = Field(None, description="Sent date + 45 days. Only if relevant information was "
+                                                           "sent in the first 30 days; agencies only.")
+    days_remaining: int | None = Field(None, description="Negative when past due_date.")
+    overdue: bool = Field(description="True when a sent dispute is past its 30-day date.")
+    next_action: str
+    basis: str
+    clock_starts: str
+    unknowns: list[str] = Field(description="Facts the tool cannot know, so it does not guess them.")
+
+
+class DeadlinePage(BaseModel):
+    as_of: str
+    disclaimer: str
+    sources: list[RuleSource]
+    open_total: int
+    overdue_total: int
+    disputes: list[DeadlineRow]
+    has_more: bool
+    next_offset: int | None = None
+
+
 def due_for(party_type: str, sent_date: str | None) -> tuple[str | None, str]:
     if party_type == "furnisher":
         return None, DUE_FURNISHER
@@ -141,6 +178,8 @@ class DisputesModule(Module):
                 "disputes_get": "Full record for one dispute, with its history.",
                 "disputes_create": "Start tracking a dispute.",
                 "disputes_update": "Change status, set the sent date, or add a note. Keeps history.",
+                "disputes_deadlines": "Open disputes with the statutory response deadline for each, days remaining, "
+                                      "an overdue flag and the next action. Read-only.",
                 "disputes_delete": "Delete a dispute record. Preview first; you approve it.",
             },
         )
@@ -168,6 +207,33 @@ class DisputesModule(Module):
         def disputes_get(id: str) -> Dispute:
             """The full record for one dispute: details, due date, letters written, and history."""
             return Dispute.model_validate(_get(store.read(), id))
+
+        @mcp.tool(annotations=READ_ONLY)
+        def disputes_deadlines(as_of: str | None = None, limit: int = 20, offset: int = 0) -> DeadlinePage:
+            """Open disputes (draft, sent, response_received) with the statutory response deadline for each.
+            An agency must reinvestigate within 30 days of receiving the dispute, 15 U.S.C. 1681i(a)(1)(A)
+            (https://www.law.cornell.edu/uscode/text/15/1681i). A furnisher must report results before that
+            period ends, 15 U.S.C. 1681s-2(a)(8)(E)(iii) and (b)(2) (https://www.law.cornell.edu/uscode/text/15/1681s-2).
+            Counted from the sent date you recorded, so the real date is the same or later. Returns days remaining,
+            an overdue flag (past the 30-day date), the next action, and the facts the tool cannot know (the start
+            of the clock, the 15-day extension, a furnisher's extension). Not legal advice. Set as_of (YYYY-MM-DD) to
+            check another day. Page with offset=<next_offset>."""
+            day = parse_date(as_of, "disputes", "as_of") if as_of else today()
+            limit = max(1, min(limit, 100))
+            offset = max(0, offset)
+            data = store.read()
+            rows = [r for r in data["disputes"].values() if r["status"] in OPEN_STATUSES]
+            items = [assess(r, date.fromisoformat(day)) for r in rows]
+            items.sort(key=lambda a: (a["due_date"] is None, a["due_date"] or "", a["id"]))
+            page = items[offset:offset + limit]
+            has_more = offset + limit < len(items)
+            return DeadlinePage(
+                as_of=day, disclaimer=DISCLAIMER,
+                sources=[RuleSource(cite=c, url=u, checked=CHECKED, says=s) for c, u, s in SOURCES],
+                open_total=len(items), overdue_total=sum(1 for a in items if a["overdue"]),
+                disputes=[DeadlineRow.model_validate(a) for a in page],
+                has_more=has_more, next_offset=offset + limit if has_more else None,
+            )
 
         @mcp.tool(annotations=WRITES_LOCAL)
         def disputes_create(party_type: PartyType, party_name: str, item_description: str,
@@ -236,9 +302,12 @@ class DisputesModule(Module):
                 return DeleteResult(deleted=False, id=id, preview=shown,
                                     note="Preview only. Call again with confirm=true; you will be asked to approve.")
 
+            env = config.env
             if allow_delete:
                 approved_by = "settings"
+                approvals.record(env, "disputes_delete", "approved", "settings", {"dispute_id": id})
             elif _can_ask_person(ctx):
+                approvals.record(env, "disputes_delete", "requested", None, {"dispute_id": id})
                 summary = "\n".join([
                     "Delete this dispute record? This cannot be undone.",
                     f"Against: {shown.party_name} ({shown.party_type})",
@@ -248,10 +317,14 @@ class DisputesModule(Module):
                 ])
                 answer = await ctx.elicit(summary, DeleteApproval)
                 if answer.action != "accept" or not answer.data.delete:
+                    approvals.record(env, "disputes_delete", "declined", "person", {"dispute_id": id})
                     return DeleteResult(deleted=False, id=id, preview=shown,
                                         note="The person declined. Nothing was deleted.")
                 approved_by = "person"
+                approvals.record(env, "disputes_delete", "approved", "person", {"dispute_id": id})
             else:
+                approvals.record(env, "disputes_delete", "refused", None,
+                                 {"dispute_id": id, "reason": "approval_unavailable"})
                 raise PrivacyOpsError(
                     "disputes", "approval_unavailable",
                     "this MCP client cannot ask you to approve a delete, and deletes are not pre-approved.",

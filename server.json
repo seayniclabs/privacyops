@@ -1,21 +1,36 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.seayniclabs/privacyops",
-  "description": "Track credit-bureau disputes and draft dispute letters from fixed templates, locally.",
+  "description": "Track credit-report disputes and draft dispute letters, kept on your computer. Not legal advice.",
   "repository": {
     "url": "https://github.com/seayniclabs/privacyops",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "privacyops-mcp",
-      "version": "0.1.0",
-      "transport": { "type": "stdio" },
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
-        { "name": "PRIVACYOPS_DATA_DIR", "description": "Folder for your dispute records and letters. Default: ~/.local/share/privacyops", "isRequired": false },
-        { "name": "PRIVACYOPS_DISPUTES_ALLOW_DELETE", "description": "true lets the assistant delete a dispute record without asking you. Default false.", "isRequired": false }
+        {
+          "name": "PRIVACYOPS_DATA_DIR",
+          "description": "Folder for your dispute records and letters. Default: ~/.local/share/privacyops",
+          "isRequired": false
+        },
+        {
+          "name": "PRIVACYOPS_DISPUTES_ALLOW_DELETE",
+          "description": "true lets the assistant delete a dispute record without asking you. Default false.",
+          "isRequired": false
+        },
+        {
+          "name": "PRIVACYOPS_APPROVAL_LOG",
+          "description": "Path of the local approval log (ids only). Default: ~/.local/state/privacyops/approvals.jsonl",
+          "isRequired": false
+        }
       ]
     }
   ]

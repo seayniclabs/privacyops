@@ -1,6 +1,6 @@
 {
   "bundle": "privacyops",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "entries": {
     "instructions": "ec5da6ba06c22b8c6eda93d0d25294f54b2076a4fe8b197d6c2beb6cabf82454",
     "prompt:dispute-walkthrough": "fa064b4f8c9ddbed0abac87bb1c93111361175b2dc804afe703ccb31fac23359",

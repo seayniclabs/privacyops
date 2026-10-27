@@ -3,7 +3,7 @@
     "privacyops": {
       "command": "uvx",
       "args": [
-        "privacyops-mcp==0.2.1"
+        "privacyops-mcp==0.2.2"
       ]
     }
   }

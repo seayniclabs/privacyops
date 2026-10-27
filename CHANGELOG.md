@@ -2,6 +2,14 @@
 
 PrivacyOps follows [semantic versioning](https://semver.org). Modules added after 0.1 ship switched off.
 
+## 0.2.2 — 2026-10-27
+
+**No code changes.** Change the pin to `privacyops-mcp==0.2.2`.
+
+### Release process
+
+- Built and published by GitHub Actions (`release.yml`) with PyPI trusted publishing. The wheel and sdist carry PyPI provenance and a GitHub build attestation; check a download with `gh attestation verify <file> --owner seayniclabs`.
+
 ## 0.2.1 — 2026-10-27
 
 - Furnisher disputes now show the same 30-day due date in `disputes_get`, `disputes_list` and `disputes_update` as in `disputes_deadlines` (15 U.S.C. 1681s-2(a)(8)(E)(iii)); before, only `disputes_deadlines` showed it.

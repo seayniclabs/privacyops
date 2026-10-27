@@ -1,6 +1,6 @@
 {
   "name": "privacyops",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Track credit-report disputes and draft dispute letters, kept on your own computer, with skills that walk you through each dispute. Not legal advice. By Seaynic Labs.",
   "author": { "name": "Seaynic Labs", "url": "https://seayniclabs.com" },
   "homepage": "https://github.com/seayniclabs/privacyops",
